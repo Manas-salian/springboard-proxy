@@ -48,7 +48,7 @@ python proxy.py
 
 ### Browser Setup
 
-1. Add a new proxy in FoxyProxy: **Type** HTTP, **Host** `127.0.0.1`, **Port** `9876`
+1. Add a new proxy in [FoxyProxy](https://www.youtube.com/watch?v=MyJnuw7afX8): **Type** HTTP, **Host** `127.0.0.1`, **Port** `9876`
 2. Activate the proxy profile
 3. Navigate to **http://mitm.it** and install the CA certificate (required for HTTPS interception)
 4. Go to Infosys Springboard and start a certification assessment
