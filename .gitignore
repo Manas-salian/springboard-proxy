@@ -1,0 +1,36 @@
+# Environment and secrets
+.env
+
+# Logs
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# mitmproxy CA certs (user-specific)
+.mitmproxy/
+
+# Intercepted data
+assessment_sectionData.json
