@@ -4,6 +4,8 @@ HTTPS intercepting proxy for extracting question data from [Infosys Springboard]
 
 Built on [mitmproxy](https://mitmproxy.org/).
 
+![workflow](workflow.png)
+
 ## How It Works
 
 1. Browser traffic is routed through the proxy via FoxyProxy
