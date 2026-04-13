@@ -1,6 +1,15 @@
 # Springboard Proxy
 
-HTTPS intercepting proxy built on [mitmproxy](https://mitmproxy.org/). Routes browser traffic through a local proxy, logs all requests/responses, and intercepts specific API responses for processing.
+HTTPS intercepting proxy for extracting question data from [Infosys Springboard](https://infyspringboard.onwingspan.com) certification assessments. When an assessment is started in the browser, the proxy intercepts the API response containing the question bank, extracts all objective questions, and sends them to a Discord channel via webhook.
+
+Built on [mitmproxy](https://mitmproxy.org/).
+
+## How It Works
+
+1. Browser traffic is routed through the proxy via FoxyProxy
+2. When a certification assessment is started, the browser makes a `POST` to `/backend/TakeContest/Proceed` on `lex-iap.infosysapps.com`
+3. The proxy intercepts the response, extracts `sectionData[*].objectiveQuestionsData` (the full question list with options)
+4. Questions are saved to `assessment_sectionData.json` and uploaded to Discord
 
 ## Getting Started
 
@@ -8,6 +17,7 @@ HTTPS intercepting proxy built on [mitmproxy](https://mitmproxy.org/). Routes br
 
 - Python 3.10+
 - pip
+- Firefox with [FoxyProxy](https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-standard/)
 
 ### Installation
 
@@ -30,28 +40,24 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 python proxy.py
 ```
 
-Options:
-
 | Flag | Default | Description |
 |---|---|---|
 | `-p`, `--port` | `9876` | Proxy listen port |
 | `--listen-host` | `127.0.0.1` | Proxy listen host |
 | `-q`, `--quiet` | off | Suppress mitmproxy event log |
 
-### Browser Setup (FoxyProxy)
+### Browser Setup
 
-1. Install [FoxyProxy](https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-standard/) in Firefox
-2. Add a new proxy: **Type** HTTP, **Host** `127.0.0.1`, **Port** `9876`
-3. Activate the proxy profile
+1. Add a new proxy in FoxyProxy: **Type** HTTP, **Host** `127.0.0.1`, **Port** `9876`
+2. Activate the proxy profile
+3. Navigate to **http://mitm.it** and install the CA certificate (required for HTTPS interception)
+4. Go to Infosys Springboard and start a certification assessment
+5. Questions will appear in your Discord channel
 
-### Trusting the CA Certificate (required for HTTPS)
+### CA Certificate (manual install)
 
-With the proxy running and FoxyProxy active:
+If `http://mitm.it` doesn't work, import `~/.mitmproxy/mitmproxy-ca-cert.pem` manually:
 
-1. Navigate to **http://mitm.it**
-2. Download and install the certificate for your OS/browser
-
-Alternatively, import `~/.mitmproxy/mitmproxy-ca-cert.pem` manually:
 - **Firefox**: Settings > Privacy & Security > Certificates > Import
 - **System (Debian/Ubuntu)**:
   ```bash
@@ -65,25 +71,11 @@ Alternatively, import `~/.mitmproxy/mitmproxy-ca-cert.pem` manually:
 sprinboard-proxy/
 ├── proxy.py                  # Entry point
 ├── requirements.txt
-├── .env                      # Webhook URLs (not committed)
+├── .env                      # Discord webhook URL (not committed)
 ├── addons/
 │   ├── logger.py             # Console + file logging for all traffic
-│   ├── interceptor.py        # Target endpoint interception + question extraction
+│   ├── interceptor.py        # Question extraction from TakeContest/Proceed
 │   └── discord_helper.py     # Discord webhook file upload
 └── logs/
-    └── proxy.log             # Daily-rotated log (30-day retention)
+    └── proxy.log             # Daily-rotated traffic log (30-day retention)
 ```
-
-## Interceptor
-
-The interceptor targets `POST /backend/TakeContest/Proceed` on `lex-iap.infosysapps.com`. When matched, it:
-
-1. Extracts `sectionData[*].objectiveQuestionsData` from the response
-2. Saves the flattened question list to `assessment_sectionData.json`
-3. Uploads the file to Discord via webhook
-
-To change the target, edit `TARGET_HOST`, `TARGET_PATH`, and `TARGET_METHOD` in `addons/interceptor.py`.
-
-## Logs
-
-All traffic is logged to `logs/proxy.log` with daily rotation and 30-day retention. Log entries include request/response headers and body previews for text-based content types.
