@@ -13,7 +13,7 @@ import json
 from mitmproxy import http, ctx
 from addons.discord_helper import send_file_to_discord
 
-OUTPUT_DIR = os.path.dirname(os.path.dirname(__file__))
+OUTPUT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "assessment_sectionData.json")
 
 

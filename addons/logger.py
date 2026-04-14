@@ -7,11 +7,16 @@ Logs all HTTP/HTTPS requests and responses to:
 """
 
 import os
+import sys
 import logging
 from datetime import datetime
 from logging.handlers import TimedRotatingFileHandler
 
 from mitmproxy import http
+
+# Enable ANSI escape codes on Windows 10+
+if sys.platform == "win32":
+    os.system("")
 
 
 class Colors:
@@ -60,7 +65,7 @@ def _human_size(size_bytes: int) -> str:
 
 
 def _setup_file_logger() -> logging.Logger:
-    log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "logs")
+    log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
     os.makedirs(log_dir, exist_ok=True)
 
     logger = logging.getLogger("proxy_file_logger")

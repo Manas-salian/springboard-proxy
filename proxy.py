@@ -9,6 +9,7 @@ Usage:
     python proxy.py [--port PORT] [--listen-host HOST] [-q]
 """
 
+import os
 import argparse
 import asyncio
 
@@ -76,14 +77,15 @@ async def start_proxy(args: argparse.Namespace) -> None:
 
     print(BANNER)
     print(f"  Listening on  {args.listen_host}:{args.port}")
+    ca_dir = os.path.join(os.path.expanduser("~"), ".mitmproxy")
     print(f"  Logs          ./logs/")
-    print(f"  CA certs      ~/.mitmproxy/")
+    print(f"  CA certs      {ca_dir}")
     print()
     print(f"  FoxyProxy     HTTP Proxy -> 127.0.0.1:{args.port}")
     print(f"  CA install    http://mitm.it (with proxy active)")
     print()
     print(f"  Ctrl+C to stop")
-    print(f"{'─' * 50}")
+    print("-" * 50)
     print()
 
     try:
