@@ -64,6 +64,7 @@ async def start_proxy(args: argparse.Namespace) -> None:
         listen_host=args.listen_host,
         listen_port=args.port,
         ssl_insecure=True,
+        http2=False,
     )
 
     master = DumpMaster(
